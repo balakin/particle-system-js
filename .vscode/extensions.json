@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "ms-vscode.cpptools",
+    "twxs.cmake",
+    "EditorConfig.EditorConfig",
+    "esbenp.prettier-vscode",
+    "dtsvet.vscode-wasm"
+  ]
+}

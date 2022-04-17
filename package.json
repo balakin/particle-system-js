@@ -1,0 +1,23 @@
+{
+  "name": "particle-system-js",
+  "version": "0.1.0",
+  "description": "Port of cpp program to web",
+  "main": "index.js",
+  "repository": "https://github.com/Trequend/particle-system-js.git",
+  "author": "Dmitry Balakin",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "cross-env NODE_ENV=production node scripts/build.js && cross-env NODE_ENV=production webpack",
+    "dev": "node scripts/build.js && npx webpack serve",
+    "rebuild-cpp": "node scripts/build.js"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^10.2.4",
+    "cross-env": "^7.0.3",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.8.1"
+  }
+}
