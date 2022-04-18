@@ -180,6 +180,7 @@ int main() {
   double lastFrameTime = 0.0;
   double deltaTime = 0.0;
   double step = 1.0 / fps;
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   loop = [&] {
     double currentFrameTime = glfwGetTime();
     glClear(GL_COLOR_BUFFER_BIT);
