@@ -3,6 +3,7 @@
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/src/particle-system/src/**",
     "${workspaceFolder}/src/particle-system/vendor/**",
+    "${workspaceFolder}/src/particle-system/vendor/imgui/**",
     "${env:EMSDK}/upstream/emscripten/cache/sysroot/include/**"
   ],
   "C_Cpp.formatting": "clangFormat",
@@ -69,7 +70,12 @@
     "__tree": "cpp",
     "cfenv": "cpp",
     "iomanip": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "deque": "cpp",
+    "fstream": "cpp",
+    "numeric": "cpp",
+    "random": "cpp",
+    "stack": "cpp"
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",

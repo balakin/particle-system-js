@@ -59,7 +59,9 @@ module.exports = {
     port: 9000,
   },
   performance: production
-    ? undefined
+    ? {
+        maxAssetSize: 1048576,
+      }
     : {
         hints: false,
       },

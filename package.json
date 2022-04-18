@@ -1,6 +1,6 @@
 {
   "name": "particle-system-js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Port of cpp program to web",
   "main": "index.js",
   "repository": "https://github.com/Trequend/particle-system-js.git",
