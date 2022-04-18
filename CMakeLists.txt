@@ -29,4 +29,4 @@ target_link_options(ParticleSystem PRIVATE
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 # Release
-set(CMAKE_CXX_FLAGS_RELEASE "-Os -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
