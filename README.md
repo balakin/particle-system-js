@@ -17,7 +17,6 @@
 - [Port Source](#port-source)
 - [Technology Stack](#technology-stack)
 - [How To Start](#how-to-start)
-- [Demo](#demo)
 - [License](#license)
 
 ## Features
@@ -97,10 +96,6 @@ yarn run rebuild-cpp
 ```bash
 yarn run build
 ```
-
-## Demo
-
-![Demo](media/demo.gif)
 
 ## License
 
