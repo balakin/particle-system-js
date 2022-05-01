@@ -16,12 +16,16 @@ include_directories("src/particle-system/vendor" "src/particle-system/vendor/img
 
 set_property(TARGET ParticleSystem PROPERTY CXX_STANDARD 17)
 
+target_compile_options(ParticleSystem PRIVATE
+  -sUSE_SDL=2
+)
+
 target_link_options(ParticleSystem PRIVATE
   -sEXPORT_ES6
   -sMODULARIZE
   -sENVIRONMENT=web
   -sMAX_WEBGL_VERSION=2
-  -sUSE_GLFW=3
+  -sUSE_SDL=2
   -sALLOW_MEMORY_GROWTH
   "SHELL:--output_eol linux"
   "SHELL:--embed-file \"${PROJECT_SOURCE_DIR}/src/particle-system/assets@assets\""

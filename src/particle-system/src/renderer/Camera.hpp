@@ -1,14 +1,13 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 #include <glm/glm.hpp>
 
 #include "CameraException.hpp"
 
 class Camera {
 public:
-  enum class Projection
-  {
+  enum class Projection {
     Orthographic,
     Perspective
   };
@@ -18,26 +17,8 @@ public:
          glm::vec3 clearColor = glm::vec3(0.0f),
          Camera::Projection projectionType = Camera::Projection::Orthographic)
       : clearColor(clearColor), translation(translation), rotation(rotation) {
-    GLFWwindow *window = glfwGetCurrentContext();
-    if (!window) {
-      throw CameraException("No window");
-    }
-
-    int width, height;
-    glfwGetWindowSize(window, &width, &height);
     UpdateViewMatrix();
-    SetProjection(projectionType, width, height);
-  }
-
-  Camera(unsigned int screenWidth,
-         unsigned int screenHeight,
-         glm::vec3 translation = glm::vec3(0.0f),
-         glm::vec3 rotation = glm::vec3(0.0f),
-         glm::vec3 clearColor = glm::vec3(0.0f),
-         Camera::Projection projectionType = Camera::Projection::Orthographic)
-      : clearColor(clearColor), translation(translation), rotation(rotation) {
-    UpdateViewMatrix();
-    SetProjection(projectionType, screenWidth, screenHeight);
+    SetProjection(projectionType, 1, 1);
   }
 
   glm::vec3 clearColor;

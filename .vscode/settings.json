@@ -4,7 +4,8 @@
     "${workspaceFolder}/src/particle-system/src/**",
     "${workspaceFolder}/src/particle-system/vendor/**",
     "${workspaceFolder}/src/particle-system/vendor/imgui/**",
-    "${env:EMSDK}/upstream/emscripten/cache/sysroot/include/**"
+    "${env:EMSDK}/upstream/emscripten/cache/sysroot/include/**",
+    "${env:EMSDK}/upstream/emscripten/cache/sysroot/include/SDL2/"
   ],
   "C_Cpp.formatting": "clangFormat",
   "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Microsoft, IndentWidth: 2, ColumnLimit: 120, BreakBeforeBraces: Attach, NamespaceIndentation: All, BinPackParameters: false, BinPackArguments: false }",

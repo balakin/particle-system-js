@@ -10,13 +10,12 @@
 class WindowsManager : public Window {
 private:
   bool toggleButtonPressed = false;
-  GLFWwindow *window;
   int savedPosition[2] = {0, 0};
   int savedSize[2] = {0, 0};
   std::vector<std::shared_ptr<Window>> windows;
 
 public:
-  WindowsManager(GLFWwindow *window);
+  WindowsManager();
 
   void Render() override;
   void AddWindow(Window *window);

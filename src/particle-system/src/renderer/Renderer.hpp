@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL.h>
 #include <chrono>
 #include <glm/glm.hpp>
 #include <memory>
@@ -66,7 +67,7 @@ public:
   Renderer(unsigned int maxQuadCount);
   ~Renderer();
 
-  void BeginScene();
+  void BeginScene(SDL_Window *window);
   void EndScene();
 
   static void Setup(unsigned int maxQuadCount);

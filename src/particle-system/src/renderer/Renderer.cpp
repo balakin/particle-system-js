@@ -132,7 +132,7 @@ Renderer::~Renderer() {
   renderer = nullptr;
 }
 
-void Renderer::BeginScene() {
+void Renderer::BeginScene(SDL_Window *window) {
   if (isScene) {
     throw RendererError("Scene has already begun");
   }
@@ -144,13 +144,8 @@ void Renderer::BeginScene() {
     return;
   }
 
-  GLFWwindow *window = glfwGetCurrentContext();
-  if (!window) {
-    throw RendererError("No window");
-  }
-
   int width, height;
-  glfwGetWindowSize(window, &width, &height);
+  SDL_GetWindowSize(window, &width, &height);
   glViewport(0, 0, width, height);
 
   Camera &camera = Scene::GetCurrent().GetCamera();

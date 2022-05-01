@@ -1,6 +1,6 @@
 #include "WindowsManager.hpp"
 
-WindowsManager::WindowsManager(GLFWwindow *window) : Window("Windows"), window(window) {
+WindowsManager::WindowsManager() : Window("Windows") {
 }
 
 void WindowsManager::Render() {

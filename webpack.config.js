@@ -61,7 +61,7 @@ module.exports = {
   },
   performance: production
     ? {
-        maxAssetSize: 1048576,
+        maxAssetSize: 2097152,
       }
     : {
         hints: false,

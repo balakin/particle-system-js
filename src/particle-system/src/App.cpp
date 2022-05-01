@@ -1,12 +1,12 @@
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <emscripten.h>
 #include <emscripten/html5.h>
-#include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_impl_sdl.h>
 
 #include "Bridge.hpp"
 #include "renderer/Renderer.hpp"
@@ -32,55 +32,52 @@ void RegisterScenes() {
   Scene::BlockRegistration();
 }
 
-void ErrorCallbackGLFW(int errorCode, const char *description) {
-  emscripten_console_errorf("GLFW (%d): %s", errorCode, description);
-}
-
-bool InitGLFW() {
-#if _DEBUG
-  glfwSetErrorCallback(ErrorCallbackGLFW);
-#endif
-  if (!glfwInit()) {
-    emscripten_console_error("(GLFW) failed to initialize");
+bool InitSDL() {
+  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    emscripten_console_errorf("(SDL) failed to initialize: %s", SDL_GetError());
     return false;
   }
 
   return true;
 }
 
-GLFWwindow *CreateGLFWWindow(const char *title) {
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+SDL_Window *CreateSDLWindow(const char *title) {
   int width, height;
   Bridge::GetRequiredWindowsSize(&width, &height);
-  GLFWwindow *window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+  SDL_Window *window =
+      SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
   if (!window) {
-    emscripten_console_error("(GLFW) failed to create window");
+    emscripten_console_errorf("(SDL) failed to create window: %s", SDL_GetError());
     return nullptr;
   }
 
-  glfwMakeContextCurrent(window);
+  return window;
+}
+
+SDL_GLContext CreateGLContext(SDL_Window *window) {
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+  SDL_GLContext context = SDL_GL_CreateContext(window);
+  SDL_GL_MakeCurrent(window, context);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  return window;
+  return context;
 }
 
 bool InitGLEW() {
   unsigned int code = glewInit();
   if (code != GLEW_OK) {
-    emscripten_console_errorf("GLEW: %s", glewGetErrorString(code));
-    emscripten_console_error("(GLEW) failed to initialize");
+    emscripten_console_errorf("(GLEW) failed to initialize: %s", glewGetErrorString(code));
   }
 
   return true;
 }
 
-ImGuiIO &InitImGui(GLFWwindow *window) {
+ImGuiIO &InitImGui(SDL_Window *window, SDL_GLContext context) {
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
   io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Regular.ttf", 18.0f);
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplSDL2_InitForOpenGL(window, context);
   ImGui_ImplOpenGL3_Init();
 
   // Dark theme. Thanks Cherno. https://github.com/TheCherno/Hazel/blob/master/Hazel/src/Hazel/ImGui/ImGuiLayer.cpp
@@ -120,7 +117,7 @@ ImGuiIO &InitImGui(GLFWwindow *window) {
 
 void ImGuiNewFrame() {
   ImGui_ImplOpenGL3_NewFrame();
-  ImGui_ImplGlfw_NewFrame();
+  ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();
 }
 
@@ -145,22 +142,23 @@ void Loop() {
 int main() {
   RegisterScenes();
 
-  if (!InitGLFW()) {
+  if (!InitSDL()) {
     return EXIT_FAILURE;
   }
 
-  GLFWwindow *window = CreateGLFWWindow("Particle system");
+  SDL_Window *window = CreateSDLWindow("Particle system");
   if (!window) {
     return EXIT_FAILURE;
   }
 
+  SDL_GLContext context = CreateGLContext(window);
   if (!InitGLEW()) {
     return EXIT_FAILURE;
   }
 
-  InitImGui(window);
+  InitImGui(window, context);
 
-  WindowsManager windowsManager(window);
+  WindowsManager windowsManager;
   InitWindowsManager(windowsManager);
 
   Renderer *renderer = nullptr;
@@ -170,7 +168,6 @@ int main() {
     emscripten_console_error("Shader error occured in main");
     emscripten_console_error(error.what());
     emscripten_console_error("Cannot create renderer");
-    glfwTerminate();
     return EXIT_FAILURE;
   }
 
@@ -181,10 +178,19 @@ int main() {
   double deltaTime = 0.0;
   double step = 1.0 / fps;
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  SDL_Event event;
   loop = [&] {
-    double currentFrameTime = glfwGetTime();
+    double currentFrameTime = (double)SDL_GetTicks64() / 1000.0;
     glClear(GL_COLOR_BUFFER_BIT);
-    glfwPollEvents();
+
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      ImGui_ImplSDL2_ProcessEvent(&event);
+      if (event.type == SDL_QUIT) {
+        emscripten_cancel_main_loop();
+        return;
+      }
+    }
 
     std::chrono::milliseconds updateTime;
     std::chrono::nanoseconds renderTimeCPU;
@@ -193,7 +199,7 @@ int main() {
 
     int width, height;
     Bridge::GetRequiredWindowsSize(&width, &height);
-    glfwSetWindowSize(window, width, height);
+    SDL_SetWindowSize(window, width, height);
     if (Scene::CurrentExists() && width != 0 && height != 0) {
       Scene &scene = Scene::GetCurrent();
       deltaTime += std::min(0.1, currentFrameTime - lastFrameTime);
@@ -212,7 +218,7 @@ int main() {
 
       if (!scene.IsDestroyed()) {
         start = std::chrono::high_resolution_clock::now();
-        renderer->BeginScene();
+        renderer->BeginScene(window);
         scene.Render(float(deltaTime), float(step));
         renderer->EndScene();
         auto stop = std::chrono::high_resolution_clock::now();
@@ -237,7 +243,7 @@ int main() {
                            1.0 / (currentFrameTime - lastFrameTime));
     }
 
-    glfwSwapBuffers(window);
+    SDL_GL_SwapWindow(window);
     lastFrameTime = currentFrameTime;
   };
 
@@ -245,6 +251,8 @@ int main() {
 
   delete renderer;
   Scene::CloseCurrent();
-  glfwTerminate();
+  SDL_GL_DeleteContext(context);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
   return EXIT_SUCCESS;
 }
