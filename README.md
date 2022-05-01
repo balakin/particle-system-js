@@ -91,6 +91,12 @@ Compile cpp (run after cpp code change):
 yarn run rebuild-cpp
 ```
 
+Full rebuild (run if only assets changes):
+
+```bash
+yarn run rebuild-cpp --clean-first
+```
+
 ### Build
 
 ```bash
