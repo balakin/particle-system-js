@@ -47,7 +47,7 @@ At GitHub: https://github.com/Trequend/ParticleSystem
 - Webpack
 - OpenGL 3.0 ES (WebGL 2)
 - GLEW
-- GLFW
+- SDL2
 - GLM
 - Dear ImGui
 
