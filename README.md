@@ -35,11 +35,11 @@
 
 ## Try It Online
 
-At GitHub: https://trequend.github.io/particle-system-js
+At GitHub: https://balakin.github.io/particle-system-js
 
 ## Port Source
 
-At GitHub: https://github.com/Trequend/ParticleSystem
+At GitHub: https://github.com/balakin/ParticleSystem
 
 ## Technology Stack
 
@@ -67,7 +67,7 @@ Required tools:
 Download project:
 
 ```bash
-git clone https://github.com/trequend/particle-system-js.git
+git clone https://github.com/balakin/particle-system-js.git
 cd particle-system-js
 ```
 
